@@ -1,13 +1,13 @@
 trigger:
 - main
-pool: pool
+pool: abcpool
 stages:
   - stage: terraforminit
     displayName: "TERRAFORM INIT"
     jobs:
       - job: terraforminit
         displayName: "TERRAFORM INIT"
-        pool: pool
+        pool: abcpool
         steps:
         - task: TerraformInstaller@1
           inputs:
@@ -42,6 +42,23 @@ stages:
             version: 'v1.26.0'
             dir: '$(System.DefaultWorkingDirectory)'
 
+  - stage: manualapproval
+    displayName: "MANUAL APPROVAL"
+    jobs:
+      - job: manualapproval
+        displayName: "MANUAL APPROVAL"
+        pool: server
+        steps:
+        
+        - task: ManualValidation@1
+          inputs:
+            notifyUsers: |
+              vishnukant@amityonline.com
+              2007.jaydeep@gmail.com
+            approvers: |
+              vishnukant@amityonline.com
+              2007.jaydeep@gmail.com
+            instructions: 'Please check the PR and approve it'
 
 
   - stage: terraforminitapply
@@ -49,7 +66,7 @@ stages:
     jobs:
       - job: terraforminitapply
         displayName: "TERRAFORM INIT APPLY"
-        pool: pool
+        pool: abcpool
         steps:
         
         - task: TerraformTask@5
