@@ -1,13 +1,13 @@
 trigger:
 - main
-pool: agent01
+pool: pool
 stages:
-  - stage: terraform init
+  - stage: terraforminit
     displayName: "TERRAFORM INIT"
     jobs:
       - job: terraforminit
         displayName: "TERRAFORM INIT"
-        pool: agent01
+        pool: pool
         steps:
         - task: TerraformInstaller@1
           inputs:
@@ -31,9 +31,55 @@ stages:
             workingDirectory: '$(System.DefaultWorkingDirectory)/Azure-VM-Specific'
             environmentServiceNameAzureRM: 'ser'
 
-  - stage: terraform scan
+  - stage: terraformscan
     displayName: "TERRAFORM SCAN"
     jobs:
       - job: terraformscan
         steps:
         
+        - task: tfsec@1
+          inputs:
+            version: 'v1.26.0'
+            dir: '$(System.DefaultWorkingDirectory)'
+
+  - stage: manualapproval
+    displayName: "MANUAL APPROVAL"
+    jobs:
+      - job: manualapproval
+        displayName: "MANUAL APPROVAL"
+        pool: server
+        steps:
+        
+        - task: ManualValidation@1
+          inputs:
+            notifyUsers: 'vishnukantmishra21072002@gmail.com'
+            approvers: 'vishnukantmishra21072002@gmail.com'
+            instructions: 'Please review my PR and approve it.'
+
+
+  - stage: terraforminitapply
+    displayName: "TERRAFORM INIT APPLY"
+    jobs:
+      - job: terraforminitapply
+        displayName: "TERRAFORM INIT APPLY"
+        pool: pool
+        steps:
+        
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/Azure-VM-Specific'
+            backendServiceArm: 'ser'
+            backendAzureRmResourceGroupName: 'vishnu-rg'
+            backendAzureRmStorageAccountName: 'vishnu-stg'
+            backendAzureRmContainerName: 'vishnu-cont'
+            backendAzureRmKey: 'terraform.tfstate'
+        
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/Azure-VM-Specific'
+            commandOptions: '-auto-approve'
+            environmentServiceNameAzureRM: 'ser'
