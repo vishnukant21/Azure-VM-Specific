@@ -1,0 +1,16 @@
+trigger:
+- main
+pool: agent01
+stages:
+  - stage: terraform init
+    displayName: "TERRAFORM INIT"
+    jobs:
+      - job: terraforminit
+        displayName: "TERRAFORM INIT"
+        pool: agent01
+        steps:
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
+        
+        
