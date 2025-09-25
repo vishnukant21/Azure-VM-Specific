@@ -1,13 +1,13 @@
 trigger:
 - main
-pool: abcpool
+pool: autopool
 stages:
   - stage: terraforminit
     displayName: "TERRAFORM INIT"
     jobs:
       - job: terraforminit
         displayName: "TERRAFORM INIT"
-        pool: abcpool
+        pool: autopool
         steps:
         - task: TerraformInstaller@1
           inputs:
@@ -18,7 +18,7 @@ stages:
             provider: 'azurerm'
             command: 'init'
             workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            backendServiceArm: 'ser'
+            backendServiceArm: 'connector'
             backendAzureRmResourceGroupName: 'vishnu-rg'
             backendAzureRmStorageAccountName: 'vishnu-stg'
             backendAzureRmContainerName: 'vishnu-cont'
@@ -29,7 +29,7 @@ stages:
             provider: 'azurerm'
             command: 'plan'
             workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            environmentServiceNameAzureRM: 'ser'
+            environmentServiceNameAzureRM: 'connector'
 
   - stage: terraformscan
     displayName: "TERRAFORM SCAN"
@@ -53,11 +53,9 @@ stages:
         - task: ManualValidation@1
           inputs:
             notifyUsers: |
-              vishnukant@amityonline.com
-              2007.jaydeep@gmail.com
+              vishnukantmishra21072002@gmail.com
             approvers: |
-              vishnukant@amityonline.com
-              2007.jaydeep@gmail.com
+              vishnukantmishra21072002@gmail.com
             instructions: 'Please check the PR and approve it'
 
 
@@ -66,7 +64,7 @@ stages:
     jobs:
       - job: terraforminitapply
         displayName: "TERRAFORM INIT APPLY"
-        pool: abcpool
+        pool: autopool
         steps:
         
         - task: TerraformTask@5
@@ -74,7 +72,7 @@ stages:
             provider: 'azurerm'
             command: 'init'
             workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            backendServiceArm: 'ser'
+            backendServiceArm: 'connector'
             backendAzureRmResourceGroupName: 'vishnu-rg'
             backendAzureRmStorageAccountName: 'vishnu-stg'
             backendAzureRmContainerName: 'vishnu-cont'
@@ -86,4 +84,4 @@ stages:
             command: 'apply'
             workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
             commandOptions: '-auto-approve'
-            environmentServiceNameAzureRM: 'ser'
+            environmentServiceNameAzureRM: 'connector'
