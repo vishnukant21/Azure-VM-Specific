@@ -13,4 +13,27 @@ stages:
           inputs:
             terraformVersion: 'latest'
         
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/Azure-VM-Specific'
+            backendServiceArm: 'ser'
+            backendAzureRmResourceGroupName: 'vishnu-rg'
+            backendAzureRmStorageAccountName: 'vishnu-stg'
+            backendAzureRmContainerName: 'vishnu-cont'
+            backendAzureRmKey: 'terraform.tfstate'
+
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/Azure-VM-Specific'
+            environmentServiceNameAzureRM: 'ser'
+
+  - stage: terraform scan
+    displayName: "TERRAFORM SCAN"
+    jobs:
+      - job: terraformscan
+        steps:
         
