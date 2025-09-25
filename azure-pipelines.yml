@@ -52,9 +52,13 @@ stages:
         
         - task: ManualValidation@1
           inputs:
-            notifyUsers: 'vishnukantmishra21072002@gmail.com'
-            approvers: 'vishnukantmishra21072002@gmail.com'
-            instructions: 'Please review my PR and approve it.'
+            notifyUsers: |
+              vishnukant@amityonline.com
+              2007.jaydeep@gmail.com
+            approvers: |
+              vishnukant@amityonline.com
+              2007.jaydeep@gmail.com
+            instructions: 'Please check the PR and approve it'
 
 
   - stage: terraforminitapply
