@@ -1,13 +1,13 @@
 trigger:
 - main
-pool: autopool
+pool: ABC Agent
 stages:
   - stage: terraforminit
     displayName: "TERRAFORM INIT"
     jobs:
       - job: terraforminit
         displayName: "TERRAFORM INIT"
-        pool: autopool
+        pool: ABC Agent
         steps:
         - task: TerraformInstaller@1
           inputs:
@@ -64,7 +64,7 @@ stages:
     jobs:
       - job: terraforminitapply
         displayName: "TERRAFORM INIT APPLY"
-        pool: autopool
+        pool: ABC Agent
         steps:
         
         - task: TerraformTask@5
