@@ -1,13 +1,13 @@
 trigger:
 - main
-pool: autopool
+pool: ABC Agent
 stages:
   - stage: terraforminit
     displayName: "TERRAFORM INIT"
     jobs:
       - job: terraforminit
         displayName: "TERRAFORM INIT"
-        pool: autopool
+        pool: ABC Agent
         steps:
         - task: TerraformInstaller@1
           inputs:
@@ -18,7 +18,7 @@ stages:
             provider: 'azurerm'
             command: 'init'
             workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            backendServiceArm: 'connector'
+            backendServiceArm: 'serv'
             backendAzureRmResourceGroupName: 'vishnu-rg'
             backendAzureRmStorageAccountName: 'vishnu-stg'
             backendAzureRmContainerName: 'vishnu-cont'
@@ -29,7 +29,7 @@ stages:
             provider: 'azurerm'
             command: 'plan'
             workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            environmentServiceNameAzureRM: 'connector'
+            environmentServiceNameAzureRM: 'serv'
 
   - stage: terraformscan
     displayName: "TERRAFORM SCAN"
@@ -64,7 +64,7 @@ stages:
     jobs:
       - job: terraforminitapply
         displayName: "TERRAFORM INIT APPLY"
-        pool: autopool
+        pool: ABC Agent
         steps:
         
         - task: TerraformTask@5
@@ -72,7 +72,7 @@ stages:
             provider: 'azurerm'
             command: 'init'
             workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            backendServiceArm: 'connector'
+            backendServiceArm: 'serv'
             backendAzureRmResourceGroupName: 'vishnu-rg'
             backendAzureRmStorageAccountName: 'vishnu-stg'
             backendAzureRmContainerName: 'vishnu-cont'
@@ -84,4 +84,4 @@ stages:
             command: 'apply'
             workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
             commandOptions: '-auto-approve'
-            environmentServiceNameAzureRM: 'connector'
+            environmentServiceNameAzureRM: 'serv'

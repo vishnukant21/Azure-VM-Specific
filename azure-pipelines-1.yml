@@ -1,0 +1,31 @@
+trigger:
+- main
+
+stages:
+  - stage: terraforminitplan
+    displayName: terraforminitplan
+    jobs:
+      - job: terraforminitplan
+        displayName: terraforminitplan
+        pool: ABC Agent
+        steps:
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/Azure-VM-Specific'
+            backendServiceArm: 'serv'
+            backendAzureRmResourceGroupName: 'vishnu-rg'
+            backendAzureRmStorageAccountName: 'vishnurgstg'
+            backendAzureRmContainerName: 'vishnurgstgcont'
+            backendAzureRmKey: 'terraform.tfstate'
+
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/Azure-VM-Specific'
+            environmentServiceNameAzureRM: 'serv'
