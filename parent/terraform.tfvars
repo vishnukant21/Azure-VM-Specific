@@ -4,6 +4,15 @@ rg_x = {
     location = "Central india"
   }
 }
+stg_x = {
+  "stg1" = {
+    name                     = "vishnustg321"
+    resource_group_name      = "vishnu_rg"
+    location                 = "Central india"
+    account_tier             = "Standard"
+    account_replication_type = "LRS"
+  }
+}
 
 vnet_x = {
   "vnet1" = {
