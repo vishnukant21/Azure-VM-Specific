@@ -61,6 +61,7 @@ stages:
 
   - stage: terraforminitapply
     displayName: "TERRAFORM INIT APPLY"
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/parent')
     jobs:
       - job: terraforminitapply
         displayName: "TERRAFORM INIT APPLY"
