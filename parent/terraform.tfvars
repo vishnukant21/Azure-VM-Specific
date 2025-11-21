@@ -6,8 +6,8 @@ rg_x = {
 }
 stg_x = {
   "stg1" = {
-    name                     = "vishnustg321"
-    resource_group_name      = "vishnu_rg"
+    name                     = "vashudev02"
+    resource_group_name      = "vashu"
     location                 = "Central india"
     account_tier             = "Standard"
     account_replication_type = "LRS"
