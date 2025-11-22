@@ -4,15 +4,7 @@ variable "rg_x" {
     location = string
   }))
 }
-variable "stg_x" {
-  type = map(object({
-    name                     = string
-    resource_group_name      = string
-    location                 = string
-    account_tier             = string
-    account_replication_type = string
-  }))
-}
+
 
 variable "vnet_x" {
   type = map(object({

@@ -3,12 +3,6 @@ module "rg" {
     rg   = var.rg_x
   
 }
-module "abc" {
-  source     = "../storage"
-  stg        = var.stg_x
-  cnt        = var.cnt_x
-  depends_on = [module.xyz]
-}
 
 module "vnet" {
     depends_on = [ module.rg ]
