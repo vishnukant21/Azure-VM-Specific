@@ -1,38 +1,38 @@
 module "rg" {
-    source = "../child/resource_group"
+    source = "../../module/resource_group"
     rg   = var.rg_x
   
 }
 
 module "vnet" {
     depends_on = [ module.rg ]
-    source = "../child/vnet"
+    source = "../../module/vnet"
     vnet   = var.vnet_x
 }
 
 module "subnet" {
     depends_on = [ module.vnet ]
-    source = "../child/subnet"
+    source = "../../module/subnet"
     subnet   = var.subnet_x
   
 }
 
 module "pip" {
     depends_on = [ module.rg]
-    source = "../child/pip"
+    source = "../../module/pip"
     pip   = var.pip_x
   
 }
 module "nic" {
     depends_on = [ module.rg, module.subnet]
-    source = "../child/nic"
+    source = "../../module/nic"
     nic-frontend   = var.nic-frontend
     nic-backend   = var.nic-backend 
 }
 
 module "vm" {
     depends_on = [ module.rg, module.nic, module.pip]
-    source = "../child/vm"
+    source = "../../module/vm"
     vm   = var.vm_x 
   
 }
