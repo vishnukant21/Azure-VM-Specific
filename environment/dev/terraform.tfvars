@@ -110,5 +110,45 @@ vm_x = {
       }
     }
   }
+
+"vm1" = {
+    name                            = "backend-vm"
+    location                        = "Central India"
+    resource_group_name             = "vishnu-rg"
+    size                            = "Standard_D2s_v3"
+    admin_username                  = "azurevishnu"
+    admin_password                  = "Vishnu@12345"
+    disable_password_authentication = false
+    network_interface_name          = "backend-nic"
+
+    os_disk = {
+      "osdisk1" = {
+        name                 = "diskvm"
+        caching              = "ReadWrite"
+        storage_account_type = "Standard_LRS"
+        disk_size_gb         = 30
+      }
+    }
+
+    source_image_reference = {
+      "image1" = {
+        publisher = "Canonical"
+        offer     = "0001-com-ubuntu-server-jammy"
+        sku       = "22_04-LTS"
+        version   = "latest"
+      }
+    }
+  }
 }
 
+mssql_x = {
+  sql1 = {
+    name                         = "vishnu-sqlserver"
+    resource_group_name          = "vishnu-rg"
+    location                     = "Central India"
+    version                      = "12.0"
+    administrator_login          = "sqladminuser"
+    administrator_login_password = "SqlAdmin@12345"
+    minimum_tls_version          = "1.2"
+  }
+}

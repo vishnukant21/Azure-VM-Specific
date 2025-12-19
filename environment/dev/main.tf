@@ -36,3 +36,10 @@ module "vm" {
     vm   = var.vm_x 
   
 }
+
+module "mssql" {
+  depends_on = [module.rg]
+  source     = "../../module/sql_server"
+
+  mssql_server = var.mssql_x
+}
