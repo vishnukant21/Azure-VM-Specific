@@ -20,6 +20,7 @@ module "subnet" {
 module "pip" {
     depends_on = [ module.rg]
     source = "../../module/pip"
+    
     pip   = var.pip_x
   
 }
@@ -38,8 +39,12 @@ module "vm" {
 }
 
 module "mssql" {
-  depends_on = [module.rg]
+  depends_on = [module.rg,]
   source     = "../../module/sql_server"
-
   mssql_server = var.mssql_x
+}
+module "database" {
+  depends_on = [module.mssql]
+  source     = "../../module/database"
+  databases = var.databases_x
 }

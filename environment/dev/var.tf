@@ -106,3 +106,12 @@ variable "mssql_x" {
     minimum_tls_version          = string
   }))
 }
+
+variable "databases_x" {
+  type = map(object({
+    name         = string
+    sku_name     = string
+    enclave_type = string
+    max_size_gb  = number
+  }))
+}

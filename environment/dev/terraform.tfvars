@@ -152,3 +152,17 @@ mssql_x = {
     minimum_tls_version          = "1.2"
   }
 }
+databases_x = {
+  db1 = {
+    name         = "vishnudb1"
+    sku_name     = "S0"
+    enclave_type = "VBS"
+    max_size_gb  = 2
+  }
+  db2 = {
+    name         = "vishnudb2"
+    sku_name     = "S0"
+    enclave_type = "VBS"
+    max_size_gb  = 2
+  }
+}
