@@ -31,7 +31,7 @@ subnet_x = {
   }
 }
 
-nic-frontend = {
+nic_x = {
   "nic1" = {
     name                 = "frontend-nic"
     location             = "Central india"
@@ -45,9 +45,7 @@ nic-frontend = {
       }
     }
   }
-}
-nic-backend = {
-  "nic2" = {
+   "nic2" = {
     name                 = "backend-nic"
     location             = "Central india"
     resource_group_name  = "vishnu-rg"
@@ -87,14 +85,14 @@ vm_x = {
     location                        = "Central India"
     resource_group_name             = "vishnu-rg"
     size                            = "Standard_D2s_v3"
-    admin_username                  = "azurevishnu"
-    admin_password                  = "Vishnu@12345"
+    admin_username                  = "vm-user"
+    admin_password                  = "vm-pass"
     disable_password_authentication = false
     network_interface_name          = "frontend-nic"
 
     os_disk = {
       "osdisk1" = {
-        name                 = "diskvm"
+        name                 = "diskvm1"
         caching              = "ReadWrite"
         storage_account_type = "Standard_LRS"
         disk_size_gb         = 30
@@ -110,20 +108,19 @@ vm_x = {
       }
     }
   }
-
-"vm1" = {
+"vm2" = {
     name                            = "backend-vm"
     location                        = "Central India"
     resource_group_name             = "vishnu-rg"
     size                            = "Standard_D2s_v3"
-    admin_username                  = "azurevishnu"
-    admin_password                  = "Vishnu@12345"
+    admin_username                  = "vm-user"
+    admin_password                  = "vm-pass"
     disable_password_authentication = false
     network_interface_name          = "backend-nic"
 
     os_disk = {
-      "osdisk1" = {
-        name                 = "diskvm"
+      "osdisk2" = {
+        name                 = "diskvm2"
         caching              = "ReadWrite"
         storage_account_type = "Standard_LRS"
         disk_size_gb         = 30
@@ -131,7 +128,7 @@ vm_x = {
     }
 
     source_image_reference = {
-      "image1" = {
+      "image2" = {
         publisher = "Canonical"
         offer     = "0001-com-ubuntu-server-jammy"
         sku       = "22_04-LTS"
@@ -147,20 +144,15 @@ mssql_x = {
     resource_group_name          = "vishnu-rg"
     location                     = "Central India"
     version                      = "12.0"
-    administrator_login          = "sqladminuser"
-    administrator_login_password = "SqlAdmin@12345"
+    administrator_login          = "sql-user"
+    administrator_login_password = "sql-pass"
     minimum_tls_version          = "1.2"
   }
+
 }
 databases_x = {
   db1 = {
-    name         = "vishnudb1"
-    sku_name     = "S0"
-    enclave_type = "VBS"
-    max_size_gb  = 2
-  }
-  db2 = {
-    name         = "vishnudb2"
+    name         = "vishnudb"
     sku_name     = "S0"
     enclave_type = "VBS"
     max_size_gb  = 2

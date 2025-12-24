@@ -1,10 +1,6 @@
-data "azurerm_subnet" "subnets-frontend" {
-    name = "frontend-subnet"
-    resource_group_name = "vishnu-rg"
-    virtual_network_name = "vnet"
-}
-data "azurerm_subnet" "subnets-backend" {
-    name = "backend-subnet"
-    resource_group_name = "vishnu-rg"
-    virtual_network_name = "vnet"
+data "azurerm_subnet" "subnet" {
+    for_each = var.nic
+    name = each.value.subnet_name
+    resource_group_name = each.value.resource_group_name
+    virtual_network_name = each.value.virtual_network_name
 }

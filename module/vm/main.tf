@@ -4,12 +4,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
   location                        = each.value.location
   resource_group_name             = each.value.resource_group_name
   size                            = each.value.size
-  admin_username                  = each.value.admin_username
-  admin_password                  = each.value.admin_password
+  admin_username                  = data.azurerm_key_vault_secret.vm-user.value
+  admin_password                  = data.azurerm_key_vault_secret.vm-pass.value
   disable_password_authentication = each.value.disable_password_authentication
 
   network_interface_ids = [
-    data.azurerm_network_interface.nic.id
+    data.azurerm_network_interface.nic[each.key].id
   ]
 
   dynamic "os_disk" {
