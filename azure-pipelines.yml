@@ -61,8 +61,8 @@ stages:
         - task: tfsec@1
           inputs:
             version: 'v1.26.0'
-            args: 'tfsec is implement for scanning'
-            dir: '(System.DefaultWorkingDirectory)'
+            debug: true
+            dir: '$(System.DefaultWorkingDirectory)'
 
   - stage: manualvalidation
     displayName: Manual Validation
