@@ -1,88 +1,103 @@
 trigger:
-- main
-pool: ABC Agent
+  branches:
+    include: 
+     - main
+
+pool: piluagent
+
 stages:
-  - stage: terraforminit
-    displayName: "TERRAFORM INIT"
+  - stage: terraforminitandterraformplan
+    displayName: Terraform Init And Terraform Plan
     jobs:
-      - job: terraforminit
-        displayName: "TERRAFORM INIT"
-        pool: ABC Agent
+      - job: terraforminitandterraformplan
+        displayName: Terraform Init And Terraform Plan
+        pool: piluagent
         steps:
         - task: TerraformInstaller@1
+          displayName: Terraform Installer
           inputs:
             terraformVersion: 'latest'
-        
         - task: TerraformTask@5
+          displayName: Terraform Init
           inputs:
             provider: 'azurerm'
             command: 'init'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            backendServiceArm: 'serv'
-            backendAzureRmResourceGroupName: 'vishnu-rg'
-            backendAzureRmStorageAccountName: 'vishnu-stg'
-            backendAzureRmContainerName: 'vishnu-cont'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+            backendServiceArm: 'connection'
+            backendAzureRmResourceGroupName: 'vishu-rg'
+            backendAzureRmStorageAccountName: 'stgvishnu'
+            backendAzureRmContainerName: 'vishnucnt'
             backendAzureRmKey: 'terraform.tfstate'
 
+        - task: PowerShell@2
+          displayName: Terraform infra Cost
+          inputs:
+            targetType: 'inline'
+            script: |
+              Invoke-WebRequest https://github.com/infracost/infracost/releases/latest/download/infracost-windows-amd64.tar.gz -OutFile infracost.tar.gz
+              tar -xvf infracost.tar.gz
+              .\infracost.exe --version
+              $env:INFRACOST_API_KEY = "$(Infracost_API_KEY)"
+              .\infracost.exe breakdown --path '$(System.DefaultWorkingDirectory)/environment/dev' --format table
         - task: TerraformTask@5
+          displayName: Terraform Plan
           inputs:
             provider: 'azurerm'
             command: 'plan'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            environmentServiceNameAzureRM: 'serv'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+            environmentServiceNameAzureRM: 'connection'
 
-  - stage: terraformscan
-    displayName: "TERRAFORM SCAN"
+  - stage: terraformsecurityscan
+    displayName: Terraform Security Scan
     jobs:
-      - job: terraformscan
+      - job: terraformsecurityscan
+        displayName: Terraform Security Scan
+        continueOnError: true
+        pool: piluagent
         steps:
-        
         - task: tfsec@1
           inputs:
             version: 'v1.26.0'
-            dir: '$(System.DefaultWorkingDirectory)'
+            args: 'tfsec is implement for scanning'
+            dir: '(System.DefaultWorkingDirectory)'
 
-  - stage: manualapproval
-    displayName: "MANUAL APPROVAL"
+  - stage: manualvalidation
+    displayName: Manual Validation
     jobs:
-      - job: manualapproval
-        displayName: "MANUAL APPROVAL"
+      - job: manualvalidation
+        displayName: Manual Validation
         pool: server
         steps:
-        
         - task: ManualValidation@1
+          displayName: Manual Validation
           inputs:
-            notifyUsers: |
-              vishnukantmishra21072002@gmail.com
-            approvers: |
-              vishnukantmishra21072002@gmail.com
-            instructions: 'Please check the PR and approve it'
+            notifyUsers: 'vishnukantmishra21072002@gmail.com'
+            approvers: 'vishnukantmishra21072002@gmail.com'
+            instructions: 'Please check and approve'
 
-
-  - stage: terraforminitapply
-    displayName: "TERRAFORM INIT APPLY"
-    condition: eq(variables['Build.SourceBranch'], 'refs/heads/parent')
+  - stage: terraforminitandapply
+    displayName: Terraform Init And Terraform Apply
     jobs:
-      - job: terraforminitapply
-        displayName: "TERRAFORM INIT APPLY"
-        pool: ABC Agent
+      - job: terraforminitandapply
+        displayName: Terraform Init And Terraform Apply
+        pool: piluagent
         steps:
-        
         - task: TerraformTask@5
+          displayName: Terraform Init
           inputs:
             provider: 'azurerm'
             command: 'init'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            backendServiceArm: 'serv'
-            backendAzureRmResourceGroupName: 'vishnu-rg'
-            backendAzureRmStorageAccountName: 'vishnu-stg'
-            backendAzureRmContainerName: 'vishnu-cont'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+            backendServiceArm: 'connection'
+            backendAzureRmResourceGroupName: 'vishu-rg'
+            backendAzureRmStorageAccountName: 'stgvishnu'
+            backendAzureRmContainerName: 'vishnucnt'
             backendAzureRmKey: 'terraform.tfstate'
-        
+
         - task: TerraformTask@5
+          displayName: Terraform Apply
           inputs:
             provider: 'azurerm'
             command: 'apply'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/parent'
-            commandOptions: '-auto-approve'
-            environmentServiceNameAzureRM: 'serv'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+            environmentServiceNameAzureRM: 'connection'
