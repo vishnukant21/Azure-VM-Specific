@@ -5,6 +5,9 @@ trigger:
 
 pool: piluagent
 
+variables:
+- group: infracost-secrets
+
 stages:
   - stage: terraforminitandterraformplan
     displayName: Terraform Init And Terraform Plan
@@ -37,7 +40,7 @@ stages:
               Invoke-WebRequest https://github.com/infracost/infracost/releases/latest/download/infracost-windows-amd64.tar.gz -OutFile infracost.tar.gz
               tar -xvf infracost.tar.gz
               .\infracost.exe --version
-              $env:INFRACOST_API_KEY = "$(Infracost_API_KEY)"
+              $env:INFRACOST_API_KEY = "$(infracost-secrets)"
               .\infracost.exe breakdown --path '$(System.DefaultWorkingDirectory)/environment/dev' --format table
         - task: TerraformTask@5
           displayName: Terraform Plan
