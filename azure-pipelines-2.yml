@@ -1,0 +1,106 @@
+trigger:
+  branches:
+    include: 
+     - main
+
+pool: tikupool
+
+variables:
+- group: infracost-secrets
+
+stages:
+  - stage: terraforminitandterraformplan
+    displayName: Terraform Init And Terraform Plan
+    jobs:
+      - job: terraforminitandterraformplan
+        displayName: Terraform Init And Terraform Plan
+        pool: tikupool
+        steps:
+        - task: TerraformInstaller@1
+          displayName: Terraform Installer
+          inputs:
+            terraformVersion: 'latest'
+        - task: TerraformTask@5
+          displayName: Terraform Init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+            backendServiceArm: 'svcconnection'
+            backendAzureRmResourceGroupName: 'vishu-rg'
+            backendAzureRmStorageAccountName: 'sstgvishnu'
+            backendAzureRmContainerName: 'vishnucnt'
+            backendAzureRmKey: 'terraform.tfstate'
+
+        - task: PowerShell@2
+          displayName: Terraform infra Cost
+          inputs:
+            targetType: 'inline'
+            script: |
+              Invoke-WebRequest https://github.com/infracost/infracost/releases/latest/download/infracost-windows-amd64.tar.gz -OutFile infracost.tar.gz
+              tar -xvf infracost.tar.gz
+              .\infracost.exe --version
+              $env:INFRACOST_API_KEY = "$(infra-cost)"
+              .\infracost.exe breakdown --path '$(System.DefaultWorkingDirectory)/environment/dev' --format table
+        - task: TerraformTask@5
+          displayName: Terraform Plan
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+            environmentServiceNameAzureRM: 'svcconnection'
+
+  - stage: terraformsecurityscan
+    displayName: Terraform Security Scan
+    jobs:
+      - job: terraformsecurityscan
+        displayName: Terraform Security Scan
+        continueOnError: true
+        pool: tikupool
+        steps:
+        - task: tfsec@1
+          inputs:
+            version: 'v1.26.0'
+            debug: true
+            dir: '$(System.DefaultWorkingDirectory)'
+
+  - stage: manualvalidation
+    displayName: Manual Validation
+    jobs:
+      - job: manualvalidation
+        displayName: Manual Validation
+        pool: server
+        steps:
+        - task: ManualValidation@1
+          displayName: Manual Validation
+          inputs:
+            notifyUsers: 'vishnukantmishra21072002@gmail.com'
+            approvers: 'vishnukantmishra21072002@gmail.com'
+            instructions: 'Please check and approve'
+
+  - stage: terraforminitandapply
+    displayName: Terraform Init And Terraform Apply
+    jobs:
+      - job: terraforminitandapply
+        displayName: Terraform Init And Terraform Apply
+        pool: tikupool
+        steps:
+        - task: TerraformTask@5
+          displayName: Terraform Init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+            backendServiceArm: 'svcconnection'
+            backendAzureRmResourceGroupName: 'vishu-rg'
+            backendAzureRmStorageAccountName: 'sstgvishnu'
+            backendAzureRmContainerName: 'vishnucnt'
+            backendAzureRmKey: 'terraform.tfstate'
+
+        - task: TerraformTask@5
+          displayName: Terraform Apply
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+            environmentServiceNameAzureRM: 'svcconnection'
