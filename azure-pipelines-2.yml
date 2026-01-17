@@ -63,18 +63,20 @@ stages:
             version: 'v1.26.0'
             debug: true
             dir: '$(System.DefaultWorkingDirectory)'
-        - task: PowerShell@2
-          displayName: "Install Checkov"
+
+        - task: UsePythonVersion@0
           inputs:
-            targetType: 'inline'
-            script: |
-              python -m pip install --upgrade pip
-              pip install checkov
-              checkov --version
-        - task: PythonScript@0
-          inputs:
-            scriptSource: 'inline'
-            script: 'checkov -d .'
+            versionSpec: '3.x'
+          displayName: 'Use Python'
+
+        - script: |
+            python -m pip install --upgrade pip
+            pip install checkov
+          displayName: 'Install Checkov'
+
+        - script: |
+            checkov -d .
+          displayName: 'Run Checkov Scan'
 
   - stage: manualvalidation
     displayName: Manual Validation
