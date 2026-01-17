@@ -9,46 +9,46 @@ variables:
 - group: infracost-secrets
 
 stages:
-  - stage: terraforminitandterraformplan
-    displayName: Terraform Init And Terraform Plan
-    jobs:
-      - job: terraforminitandterraformplan
-        displayName: Terraform Init And Terraform Plan
-        pool: tikupool
-        steps:
-        - task: TerraformInstaller@1
-          displayName: Terraform Installer
-          inputs:
-            terraformVersion: 'latest'
-        - task: TerraformTask@5
-          displayName: Terraform Init
-          inputs:
-            provider: 'azurerm'
-            command: 'init'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
-            backendServiceArm: 'svcconnection'
-            backendAzureRmResourceGroupName: 'vishu-rg'
-            backendAzureRmStorageAccountName: 'sstgvishnu'
-            backendAzureRmContainerName: 'vishnucnt'
-            backendAzureRmKey: 'terraform.tfstate'
+  # - stage: terraforminitandterraformplan
+  #   displayName: Terraform Init And Terraform Plan
+  #   jobs:
+  #     - job: terraforminitandterraformplan
+  #       displayName: Terraform Init And Terraform Plan
+  #       pool: tikupool
+  #       steps:
+  #       - task: TerraformInstaller@1
+  #         displayName: Terraform Installer
+  #         inputs:
+  #           terraformVersion: 'latest'
+  #       - task: TerraformTask@5
+  #         displayName: Terraform Init
+  #         inputs:
+  #           provider: 'azurerm'
+  #           command: 'init'
+  #           workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+  #           backendServiceArm: 'svcconnection'
+  #           backendAzureRmResourceGroupName: 'vishu-rg'
+  #           backendAzureRmStorageAccountName: 'sstgvishnu'
+  #           backendAzureRmContainerName: 'vishnucnt'
+  #           backendAzureRmKey: 'terraform.tfstate'
 
-        - task: PowerShell@2
-          displayName: Terraform infra Cost
-          inputs:
-            targetType: 'inline'
-            script: |
-              Invoke-WebRequest https://github.com/infracost/infracost/releases/latest/download/infracost-windows-amd64.tar.gz -OutFile infracost.tar.gz
-              tar -xvf infracost.tar.gz
-              .\infracost.exe --version
-              $env:INFRACOST_API_KEY = "$(infra-cost)"
-              .\infracost.exe breakdown --path '$(System.DefaultWorkingDirectory)/environment/dev' --format table
-        - task: TerraformTask@5
-          displayName: Terraform Plan
-          inputs:
-            provider: 'azurerm'
-            command: 'plan'
-            workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
-            environmentServiceNameAzureRM: 'svcconnection'
+  #       - task: PowerShell@2
+  #         displayName: Terraform infra Cost
+  #         inputs:
+  #           targetType: 'inline'
+  #           script: |
+  #             Invoke-WebRequest https://github.com/infracost/infracost/releases/latest/download/infracost-windows-amd64.tar.gz -OutFile infracost.tar.gz
+  #             tar -xvf infracost.tar.gz
+  #             .\infracost.exe --version
+  #             $env:INFRACOST_API_KEY = "$(infra-cost)"
+  #             .\infracost.exe breakdown --path '$(System.DefaultWorkingDirectory)/environment/dev' --format table
+  #       - task: TerraformTask@5
+  #         displayName: Terraform Plan
+  #         inputs:
+  #           provider: 'azurerm'
+  #           command: 'plan'
+  #           workingDirectory: '$(System.DefaultWorkingDirectory)/environment/dev'
+  #           environmentServiceNameAzureRM: 'svcconnection'
 
   - stage: terraformsecurityscan
     displayName: Terraform Security Scan
@@ -64,25 +64,15 @@ stages:
             debug: true
             dir: '$(System.DefaultWorkingDirectory)'
         - task: PowerShell@2
-          displayName: Install Trivy
+          displayName: Install Trivy (Binary)
           inputs:
             targetType: 'inline'
             script: |
-              Write-Host "Downloading Trivy install script..."
-
-              Invoke-WebRequest `
-                -Uri "https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.ps1" `
-                -OutFile "install-trivy.ps1" `
-                -ErrorAction Stop
-
-              Write-Host "Installing Trivy..."
-              .\install-trivy.ps1 -InstallDir "C:\trivy"
-
-              Write-Host "Adding Trivy to PATH..."
-              $env:PATH += ";C:\trivy"
-
+              $url = "https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.1_windows-64bit.zip"
+              Invoke-WebRequest -Uri $url -OutFile trivy.zip
+              Expand-Archive trivy.zip C:\trivy
+              Write-Host "##vso[task.prependpath]C:\trivy"
               trivy --version
-
 
   - stage: manualvalidation
     displayName: Manual Validation
