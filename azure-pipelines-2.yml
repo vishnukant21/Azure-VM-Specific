@@ -66,16 +66,15 @@ stages:
 
         - task: UsePythonVersion@0
           inputs:
-            versionSpec: '3.x'
+            versionSpec: '3.12.0'
           displayName: 'Use Python'
 
         - script: |
-            python -m pip install --upgrade pip
             pip install checkov
           displayName: 'Install Checkov'
 
         - script: |
-            checkov -d .
+            checkov -d $(System.DefaultWorkingDirectory) --framework terraform
           displayName: 'Run Checkov Scan'
 
   - stage: manualvalidation
