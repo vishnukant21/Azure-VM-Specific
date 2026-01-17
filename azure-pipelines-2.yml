@@ -64,15 +64,17 @@ stages:
             debug: true
             dir: '$(System.DefaultWorkingDirectory)'
         - task: PowerShell@2
-          displayName: Install Trivy (Binary)
+          displayName: "Install Checkov"
           inputs:
             targetType: 'inline'
             script: |
-              $url = "https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.1_windows-64bit.zip"
-              Invoke-WebRequest -Uri $url -OutFile trivy.zip
-              Expand-Archive trivy.zip C:\trivy
-              Write-Host "##vso[task.prependpath]C:\trivy"
-              trivy --version
+              python -m pip install --upgrade pip
+              pip install checkov
+              checkov --version
+        - task: PythonScript@0
+          inputs:
+            scriptSource: 'inline'
+            script: 'checkov -d .'
 
   - stage: manualvalidation
     displayName: Manual Validation
