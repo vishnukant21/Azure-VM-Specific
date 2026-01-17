@@ -63,6 +63,14 @@ stages:
             version: 'v1.26.0'
             debug: true
             dir: '$(System.DefaultWorkingDirectory)'
+        - task: PowerShell@2
+          inputs:
+            targetType: 'inline'
+            script: |
+              Invoke-WebRequest -Uri https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.ps1 -OutFile install-trivy.ps1
+              .\install-trivy.ps1 -InstallDir "$(System.DefaultWorkingDirectory)"
+              $env:PATH += ";C:\trivy"
+              trivy --version
 
   - stage: manualvalidation
     displayName: Manual Validation
