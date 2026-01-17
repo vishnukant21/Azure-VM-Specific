@@ -45,7 +45,7 @@ nic_x = {
       }
     }
   }
-   "nic2" = {
+  "nic2" = {
     name                 = "backend-nic"
     location             = "Central india"
     resource_group_name  = "vishnu-rg"
@@ -67,7 +67,7 @@ pip_x = {
     resource_group_name = "vishnu-rg"
     allocation_method   = "Static"
     sku                 = "Standard"
-    
+
   }
   "pip2" = {
     name                = "backend-pip"
@@ -75,7 +75,7 @@ pip_x = {
     resource_group_name = "vishnu-rg"
     allocation_method   = "Static"
     sku                 = "Standard"
-    
+
   }
 }
 
@@ -108,7 +108,7 @@ vm_x = {
       }
     }
   }
-"vm2" = {
+  "vm2" = {
     name                            = "backend-vm"
     location                        = "Central India"
     resource_group_name             = "vishnu-rg"
