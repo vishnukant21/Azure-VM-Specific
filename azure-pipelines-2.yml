@@ -64,13 +64,25 @@ stages:
             debug: true
             dir: '$(System.DefaultWorkingDirectory)'
         - task: PowerShell@2
+          displayName: Install Trivy
           inputs:
             targetType: 'inline'
             script: |
-              Invoke-WebRequest -Uri https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.ps1 -OutFile install-trivy.ps1
-              .\install-trivy.ps1 -InstallDir "$(System.DefaultWorkingDirectory)"
+              Write-Host "Downloading Trivy install script..."
+
+              Invoke-WebRequest `
+                -Uri "https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.ps1" `
+                -OutFile "install-trivy.ps1" `
+                -ErrorAction Stop
+
+              Write-Host "Installing Trivy..."
+              .\install-trivy.ps1 -InstallDir "C:\trivy"
+
+              Write-Host "Adding Trivy to PATH..."
               $env:PATH += ";C:\trivy"
+
               trivy --version
+
 
   - stage: manualvalidation
     displayName: Manual Validation
