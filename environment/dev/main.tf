@@ -29,11 +29,16 @@ module "nic" {
   nic        = var.nic_x   
 }
 
-module "vm" {
-  depends_on = [module.rg, module.nic, module.pip]
-  source     = "../../module/vm"
-  vm         = var.vm_x
+# module "vm" {
+#   depends_on = [module.rg, module.nic, module.pip]
+#   source     = "../../module/vm"
+#   vm         = var.vm_x
 
+# }
+module "vmss" {
+  depends_on = [module.rg, module.vnet, module.subnet, module.nic, module.pip]
+  source     = "../../module/vmss"
+  vmss       = var.vmss_x
 }
 
 module "mssql" {
@@ -47,3 +52,22 @@ module "database" {
   source     = "../../module/database"
   databases  = var.databases_x
 }
+
+module "bastion" {
+  depends_on = [module.rg, module.vnet, module.subnet, module.pip]
+  source     = "../../module/bastion"
+  bastion    = var.bastion_x
+}
+
+module "nsg" {
+  depends_on = [ module.nic, module.vmss ]
+  source = "../../module/nsg"
+  nsgs = var.nsgs_x
+}
+
+module "application_gateway" {
+  depends_on = [module.rg, module.vnet, module.subnet, module.pip]
+  source     = "../../module/application_gateway"
+  application_gateway = var.application_gateway_x
+}
+

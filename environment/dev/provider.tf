@@ -15,7 +15,7 @@ provider "azurerm" {
 terraform {
   backend "azurerm" {
     resource_group_name  = "vishu-rg"
-    storage_account_name = "stgvishnu"
+    storage_account_name = "sstgvishnu"
     container_name       = "vishnucnt"
     key                  = "terraform.tfstate"
 
